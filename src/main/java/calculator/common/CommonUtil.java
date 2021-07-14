@@ -29,9 +29,7 @@ import graphql.language.IntValue;
 import graphql.language.StringValue;
 import graphql.language.Value;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -159,19 +157,6 @@ public class CommonUtil {
         }
 
         return sb.toString();
-    }
-
-
-    public static int arraySize(Object object) {
-        if (object instanceof Collection) {
-            return ((Collection<?>) object).size();
-        }
-
-        if (object.getClass().isArray()) {
-            return Array.getLength(object);
-        }
-
-        return 0;
     }
 
 }

@@ -1,19 +1,56 @@
 # 指令定义
 
 directive @fetchSource(name: String!, sourceConvert:String) on FIELD
-directive @skipBy(predicate: String!, dependencySources: [String!]) on FIELD
 directive @mock(value: String!) on FIELD
+
+# 对请求进行处理：改变请求参数、决定是否请求
+directive @skipBy(predicate: String!, dependencySources: [String!]) on FIELD
+directive @argumentTransform(argumentName:String!, operateType:ParamTransformType, expression:String, dependencySources:[String!]) on FIELD
+
+# 对结果记性计算
+directive @map(mapper:String!, dependencySources:[String!]) on FIELD
+
+# 对结果进行过滤、排序
 directive @filter(predicate: String!, dependencySources: [String!]) on FIELD
 directive @sort(key: String!,reversed: Boolean = false) on FIELD
 directive @sortBy(comparator: String!, reversed: Boolean = false, dependencySources: [String!]) on FIELD
-directive @map(mapper:String!, dependencySources:[String!]) on FIELD
-directive @argumentTransform(argumentName:String!, operateType:ParamTransformType, expression:String, dependencySources:[String!]) on FIELD
+
 enum ParamTransformType{
     MAP
     FILTER
     LIST_MAP
 }
 
+
+# 并行请求、然后使用其中一个字段获取结果、对另外一个字段解析结果进行过滤
+query xxx{
+    consumer{
+        userInfoList(userIds: [1,2,3])
+        @filter(predicate: "listContain(validUserIdList,userId)",dependencySources: "validUserIdList")
+        {
+            userId
+        }
+
+        validUserInfo:userInfoList(userIds: [2,3,4]){
+            userId @fetchSource(name: "validUserIdList")
+        }
+    }
+}
+
+
+# 根据解析结果进行排序（并非获取结果）
+query sortResult_case01{
+    commodity{
+        itemList(itemIds: [3,4,1,2])
+        @sortBy(comparator: "sortKey")
+        {
+            itemId
+            sortKey: itemId @map(mapper: "itemId")
+            salePrice
+            saleAmount(itemId: 1)
+        }
+    }
+}
 
 
 query sortResult_case01{

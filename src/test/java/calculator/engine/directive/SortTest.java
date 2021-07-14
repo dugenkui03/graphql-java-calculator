@@ -146,7 +146,40 @@ public class SortTest {
         );
     }
 
+    @Test
+    public void sortByResult_case01() {
+        AviatorEvaluator.addFunction(new ListContain());
+        GraphQLSource graphQLSource = GraphQLSourceHolder.getGraphQLByDataFetcherMap(GraphQLSourceHolder.defaultDataFetcherInfo());
 
+        String query = "" +
+                "query sortResult_case01{\n" +
+                "    commodity{\n" +
+                "        itemList(itemIds: [3,4,1,2])\n" +
+                "        @sortBy(comparator: \"sortKey\")\n" +
+                "        {\n" +
+                "            itemId\n" +
+                "            sortKey: itemId @map(mapper: \"itemId\")\n" +
+                "            salePrice\n" +
+                "            saleAmount(itemId: 1)\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+        ParseAndValidateResult validateResult = Validator.validateQuery(query, graphQLSource.getWrappedSchema(), ConfigImpl.newConfig().build());
+        assert !validateResult.isFailure();
+
+        ExecutionResult executionResult = graphQLSource.getGraphQL().execute(query);
+        assert executionResult.getErrors().isEmpty();
+        Map<String, Map<String, Object>> data = executionResult.getData();
+        System.out.println(Thread.currentThread().getId());
+        assert Objects.equals(data.get("commodity").get("itemList").toString(),
+                "[{itemId=1, sortKey=1, salePrice=11, saleAmount=10}, " +
+                        "{itemId=2, sortKey=2, salePrice=21, saleAmount=10}, " +
+                        "{itemId=3, sortKey=3, salePrice=31, saleAmount=10}, " +
+                        "{itemId=4, sortKey=4, salePrice=41, saleAmount=10}]"
+        );
+    }
+
+    // todo 线程block问题
     @Test
     public void sortByWithSource_case01() {
         Map<String, Map<String, DataFetcher>> dataFetcherInfoMap = GraphQLSourceHolder.defaultDataFetcherInfo();
@@ -161,7 +194,7 @@ public class SortTest {
                 "query sortByWithSource_case01{\n" +
                 "    commodity{\n" +
                 "        itemList(itemIds: [9,11,10,12])\n" +
-                "        @sortBy(comparator: \"listContain(bindingItemIds,itemId)\",dependencySources: \"bindingItemIds\")\n" +
+                "        @sortBy(comparator: \"listContain(bindingItemIds111,itemId)\",dependencySources: \"bindingItemIds111\")\n" +
                 "        {\n" +
                 "            itemId\n" +
                 "            name\n" +
@@ -171,7 +204,7 @@ public class SortTest {
                 "\n" +
                 "    marketing{\n" +
                 "        coupon(couponId: 1){\n" +
-                "            bindingItemIds @fetchSource(name: \"bindingItemIds\")\n" +
+                "            bindingItemIds @fetchSource(name: \"bindingItemIds111\")\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
@@ -185,35 +218,6 @@ public class SortTest {
                 data.get("commodity").get("itemList").toString(),
                 "[{itemId=11, name=item_name_11, salePrice=111}, {itemId=12, name=item_name_12, salePrice=121}, {itemId=9, name=item_name_9, salePrice=91}, {itemId=10, name=item_name_10, salePrice=101}]"
         );
-    }
-
-    @Test
-    public void sortResult_case01() {
-        Map<String, Map<String, DataFetcher>> dataFetcherInfoMap = GraphQLSourceHolder.defaultDataFetcherInfo();
-        AviatorEvaluator.addFunction(new ListContain());
-
-        GraphQLSource graphQLSource = GraphQLSourceHolder.getGraphQLByDataFetcherMap(
-                dataFetcherInfoMap,
-                ConfigImpl.newConfig().scriptEvaluator(new AviatorScriptEvaluator()).build()
-        );
-
-        String query = "" +
-                "query sortResult_case01{\n" +
-                "    commodity{\n" +
-                "        itemList(itemIds: [1,2,3,4])\n" +
-                "        {\n" +
-                "            itemId\n" +
-                "            sortKey: itemId @map(mapper: \"itemId/2\")\n" +
-                "            salePrice\n" +
-                "            saleAmount(itemId: 1)\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
-        ParseAndValidateResult validateResult = Validator.validateQuery(query, graphQLSource.getWrappedSchema(), ConfigImpl.newConfig().build());
-        assert !validateResult.isFailure();
-
-        ExecutionResult executionResult = graphQLSource.getGraphQL().execute(query);
-        assert executionResult.getErrors().isEmpty();
     }
 
 }

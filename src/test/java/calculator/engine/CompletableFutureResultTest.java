@@ -37,7 +37,9 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static calculator.util.TestUtil.listsWithSameElements;
-
+/**
+ * TODO: 添加各种指令与CompletableFuture结果的配对测试，指令之间的组合测试(简单)。
+ */
 public class CompletableFutureResultTest {
 
     @Test

@@ -105,7 +105,7 @@ public class SupportDataFetcherResultTest {
     }
 
     @Test
-    public void WithErrorDataFetcherResultTest(){
+    public void withErrorDataFetcherResultTest(){
 
         {
             DataFetcher<Object> commodityListDataFetcher = environment -> {

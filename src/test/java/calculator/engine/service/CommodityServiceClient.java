@@ -108,6 +108,7 @@ public class CommodityServiceClient {
     }
 
     public static List<ItemBaseInfo> batchItemBaseInfoByIds(List<Number> itemIds) {
+//        System.out.println("CommodityServiceClient threadId "  + Thread.currentThread().getId());
         if (itemIds == null) {
             return Collections.emptyList();
         }

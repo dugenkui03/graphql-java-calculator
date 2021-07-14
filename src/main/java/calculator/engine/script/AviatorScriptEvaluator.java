@@ -32,7 +32,7 @@ public class AviatorScriptEvaluator implements ScriptEvaluator {
 
     @Override
     public Object evaluate(String script, Map<String, Object> arguments) {
-        return AviatorEvaluator.execute(script, arguments);
+        return AviatorEvaluator.execute(script, arguments, true);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AviatorScriptEvaluator implements ScriptEvaluator {
 
     @Override
     public List<String> getScriptArgument(String expression) {
-        return AviatorEvaluator.compile(expression).getVariableNames();
+        return AviatorEvaluator.compile(expression, true).getVariableNames();
     }
 
     public void addFunction(AbstractFunction function) {

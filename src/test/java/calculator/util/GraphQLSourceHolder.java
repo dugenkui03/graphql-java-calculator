@@ -168,7 +168,7 @@ public class GraphQLSourceHolder {
         dataFetcherInfo.put("ToolInfo", toolInfoFieldFetchers);
 
         Map<String, DataFetcher> itemBaseInfoDataFetcher = new HashMap<>();
-        businessFieldFetchers.put("saleAmount", async(environment -> {
+        itemBaseInfoDataFetcher.put("saleAmount", async(environment -> {
             Integer itemId = environment.getArgumentOrDefault("itemId", 0);
             if (itemId == null) {
                 return 0;
@@ -176,7 +176,6 @@ public class GraphQLSourceHolder {
             return itemId * 10;
         }));
         dataFetcherInfo.put("ItemBaseInfo", itemBaseInfoDataFetcher);
-
 
         return dataFetcherInfo;
     }

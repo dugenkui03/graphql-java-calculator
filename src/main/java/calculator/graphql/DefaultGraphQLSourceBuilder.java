@@ -98,6 +98,7 @@ public class DefaultGraphQLSourceBuilder implements GraphQLSource.Builder {
         instrumentations.add(ExecutionEngine.newInstance(wrapperConfig));
 
         GraphQL.Builder graphQLBuilder = GraphQL.newGraphQL(wrappedSchema);
+        graphQLBuilder.queryExecutionStrategy(new AsyncExecutionStrategy());
         graphQLBuilder.instrumentation(new ChainedInstrumentation(instrumentations));
 
 

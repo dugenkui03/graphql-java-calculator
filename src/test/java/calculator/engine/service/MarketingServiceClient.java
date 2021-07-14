@@ -92,6 +92,7 @@ public class MarketingServiceClient {
     }
 
     public static Coupon getCouponInfoById(int couponId) {
+//        System.out.println("MarketingServiceClient threadId "  + Thread.currentThread().getId());
         List<Integer> bindingItemIds = IntStream.range(couponId, couponId + 10).boxed().collect(Collectors.toList());
         return new Coupon(
                 couponId,
